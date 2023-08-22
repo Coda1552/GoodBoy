@@ -378,6 +378,7 @@ public class Retriever extends TamableAnimal {
         return new Vec3(0.0D, this.getEyeHeight(), (this.getBbWidth() * 0.4F));
     }
 
+    // todo
     public static boolean checkRetrieverSpawnRules(EntityType<Wolf> p_218292_, LevelAccessor p_218293_, MobSpawnType p_218294_, BlockPos p_218295_, RandomSource p_218296_) {
         return p_218293_.getBlockState(p_218295_.below()).is(BlockTags.WOLVES_SPAWNABLE_ON) && isBrightEnoughToSpawn(p_218293_, p_218295_);
     }
