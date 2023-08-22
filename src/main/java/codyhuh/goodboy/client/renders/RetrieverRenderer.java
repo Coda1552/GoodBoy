@@ -3,6 +3,7 @@ package codyhuh.goodboy.client.renders;
 import codyhuh.goodboy.GoodBoy;
 import codyhuh.goodboy.client.ModModelLayers;
 import codyhuh.goodboy.client.models.RetrieverModel;
+import codyhuh.goodboy.client.renders.layers.DogCollarLayer;
 import codyhuh.goodboy.client.renders.layers.ItemInMouthLayer;
 import codyhuh.goodboy.common.entities.Retriever;
 import com.google.common.collect.Maps;
@@ -23,6 +24,7 @@ public class RetrieverRenderer extends MobRenderer<Retriever, RetrieverModel<Ret
     public RetrieverRenderer(EntityRendererProvider.Context context) {
         super(context, new RetrieverModel<>(context.bakeLayer(ModModelLayers.RETRIEVER)), 0.6F);
         addLayer(new ItemInMouthLayer<>(this, context.getItemInHandRenderer()));
+        addLayer(new DogCollarLayer<>(this, new ResourceLocation(GoodBoy.MOD_ID, "textures/entity/retriever/collar.png")));
     }
 
     public float getBob(Retriever p_116528_, float p_116529_) {

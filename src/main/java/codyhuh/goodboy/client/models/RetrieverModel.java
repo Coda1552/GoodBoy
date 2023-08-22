@@ -2,10 +2,7 @@ package codyhuh.goodboy.client.models;
 
 import codyhuh.goodboy.common.entities.Retriever;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.AgeableListModel;
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
@@ -100,6 +97,11 @@ public class RetrieverModel<T extends Retriever> extends AgeableListModel<T> {
 			this.leftBackLeg.xRot = Mth.cos(limbSwing * 0.6F + (float)Math.PI) * 1.4F * limbSwingAmount;
 			this.rightFrontLeg.xRot = Mth.cos(limbSwing * 0.6F + (float)Math.PI) * 1.4F * limbSwingAmount;
 			this.leftFrontLeg.xRot = Mth.cos(limbSwing * 0.6F) * 1.4F * limbSwingAmount;
+
+			this.rightBackLeg.yRot = 0.0F;
+			this.leftBackLeg.yRot = 0.0F;
+			this.rightFrontLeg.yRot = 0.0F;
+			this.leftFrontLeg.yRot = 0.0F;
 
 			this.body.y = 14.0F;
 			this.head.y = 10.0F;

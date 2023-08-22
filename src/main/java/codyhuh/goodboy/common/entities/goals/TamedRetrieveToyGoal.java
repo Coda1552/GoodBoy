@@ -1,15 +1,10 @@
 package codyhuh.goodboy.common.entities.goals;
 
 import codyhuh.goodboy.common.entities.Retriever;
-import codyhuh.goodboy.registry.ModItems;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.pathfinder.Path;
-
-import java.util.List;
 
 public class TamedRetrieveToyGoal extends Goal {
     private final Retriever mob;
@@ -31,14 +26,15 @@ public class TamedRetrieveToyGoal extends Goal {
 
     @Override
     public void tick() {
-       if (!mob.getRetrieving()) {
-           mob.setRetrieving(true);
-       }
+        if (!mob.getRetrieving()) {
+            mob.setRetrieving(true);
+        }
 
         if (path != null) {
             if (path.isDone()) {
                 mob.spawnAtLocation(mob.getItem());
                 mob.setItem(ItemStack.EMPTY);
+                mob.level.addParticle(ParticleTypes.HEART, mob.getX(), mob.getY() + 0.6D, mob.getZ(), 0.0D, 0.0D, 0.0D);
                 stop();
             }
             return;

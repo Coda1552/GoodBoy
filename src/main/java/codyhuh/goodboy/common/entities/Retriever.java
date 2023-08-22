@@ -2,46 +2,40 @@ package codyhuh.goodboy.common.entities;
 
 import codyhuh.goodboy.common.entities.goals.TamedGoToToyGoal;
 import codyhuh.goodboy.common.entities.goals.TamedRetrieveToyGoal;
+import codyhuh.goodboy.common.entities.util.AbstractDog;
 import codyhuh.goodboy.registry.ModEntities;
 import codyhuh.goodboy.registry.ModItems;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Wolf;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class Retriever extends TamableAnimal {
-    private static final EntityDataAccessor<Integer> DATA_COLLAR_COLOR = SynchedEntityData.defineId(Retriever.class, EntityDataSerializers.INT);
+public class Retriever extends AbstractDog {
     private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Retriever.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_RETRIEVING = SynchedEntityData.defineId(Retriever.class, EntityDataSerializers.BOOLEAN);
     public ItemStack item = ItemStack.EMPTY;
@@ -56,23 +50,15 @@ public class Retriever extends TamableAnimal {
     }
 
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(2, new BreedGoal(this, 1.15D));
-        this.goalSelector.addGoal(2, new FollowParentGoal(this, 1.15D));
-        this.goalSelector.addGoal(3, new TamedGoToToyGoal(this));
-        this.goalSelector.addGoal(3, new TamedRetrieveToyGoal(this));
-        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false) {
+        super.registerGoals();
+        this.goalSelector.addGoal(2, new TamedGoToToyGoal(this));
+        this.goalSelector.addGoal(2, new TamedRetrieveToyGoal(this));
+        this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !getRetrieving();
             }
         });
-        this.goalSelector.addGoal(7, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
     }
 
     public static AttributeSupplier.Builder createRetrieverAttributes() {
@@ -81,7 +67,6 @@ public class Retriever extends TamableAnimal {
 
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_COLLAR_COLOR, DyeColor.RED.getId());
         this.entityData.define(DATA_VARIANT, 0);
         this.entityData.define(DATA_RETRIEVING, false);
     }
@@ -100,24 +85,6 @@ public class Retriever extends TamableAnimal {
 
     public void setRetrieving(boolean retrieving) {
         this.entityData.set(DATA_RETRIEVING, retrieving);
-    }
-
-    private void returnToOwner() {
-        Path path = getNavigation().createPath(getOwner(), 0);
-
-        if (getNavigation().moveTo(path, 1.0D)) {
-
-            if (path.isDone()) {
-                playSound(SoundEvents.WOLF_PANT);
-
-                ItemEntity item = EntityType.ITEM.create(level);
-
-                item.moveTo(position());
-                item.setItem(new ItemStack(ModItems.DOG_TOY.get()));
-
-                level.addFreshEntity(item);
-            }
-        }
     }
 
     @Nullable
@@ -149,52 +116,21 @@ public class Retriever extends TamableAnimal {
         return dog;
     }
 
-    protected void playStepSound(BlockPos p_30415_, BlockState p_30416_) {
-        this.playSound(SoundEvents.WOLF_STEP, 0.15F, 1.0F);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("Variant", this.getVariant());
+        tag.putBoolean("Retreiving", this.getRetrieving());
+        tag.put("item", item.save(new CompoundTag()));
     }
 
-    public void addAdditionalSaveData(CompoundTag p_30418_) {
-        super.addAdditionalSaveData(p_30418_);
-        p_30418_.putByte("CollarColor", (byte)this.getCollarColor().getId());
-        p_30418_.putInt("Variant", this.getVariant());
-        p_30418_.putBoolean("Retreiving", this.getRetrieving());
-        p_30418_.put("item", item.save(new CompoundTag()));
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        setVariant(tag.getInt("Variant"));
+        setRetrieving(tag.getBoolean("Retrieving"));
+        item = ItemStack.of(tag.getCompound("item"));
     }
 
-    public void readAdditionalSaveData(CompoundTag p_30402_) {
-        super.readAdditionalSaveData(p_30402_);
-        if (p_30402_.contains("CollarColor", 99)) {
-            this.setCollarColor(DyeColor.byId(p_30402_.getInt("CollarColor")));
-        }
-        setVariant(p_30402_.getInt("Variant"));
-        setRetrieving(p_30402_.getBoolean("Retrieving"));
-        item = ItemStack.of(p_30402_.getCompound("item"));
-    }
-
-    protected SoundEvent getAmbientSound() {
-        if (this.random.nextInt(3) == 0) {
-            return this.isTame() && this.getHealth() < 10.0F ? SoundEvents.WOLF_WHINE : SoundEvents.WOLF_PANT;
-        } else {
-            return SoundEvents.WOLF_AMBIENT;
-        }
-    }
-
-    protected SoundEvent getHurtSound(DamageSource p_30424_) {
-        return SoundEvents.WOLF_HURT;
-    }
-
-    protected SoundEvent getDeathSound() {
-        return SoundEvents.WOLF_DEATH;
-    }
-
-    protected float getSoundVolume() {
-        return 0.4F;
-    }
-
-    protected float getStandingEyeHeight(Pose p_30409_, EntityDimensions p_30410_) {
-        return p_30410_.height * 0.8F;
-    }
-
+    // todo ?
     public int getMaxHeadXRot() {
         return this.isInSittingPose() ? 20 : super.getMaxHeadXRot();
     }
@@ -217,17 +153,12 @@ public class Retriever extends TamableAnimal {
 
     @Override
     public boolean canTakeItem(ItemStack pItemstack) {
-        return item.isEmpty();
+        return isTame() && pItemstack.is(ModItems.DOG_TOY.get()) && item.isEmpty();
     }
 
     @Override
     public boolean wantsToPickUp(ItemStack pStack) {
         return canTakeItem(pStack);
-    }
-
-    @Override
-    public void onItemPickup(ItemEntity pItem) {
-        super.onItemPickup(pItem);
     }
 
     @Override
@@ -242,43 +173,24 @@ public class Retriever extends TamableAnimal {
         }
     }
 
-    public boolean hurt(DamageSource p_30386_, float p_30387_) {
-        if (this.isInvulnerableTo(p_30386_)) {
-            return false;
-        }
-        else {
-            Entity entity = p_30386_.getEntity();
-            if (!this.level.isClientSide) {
-                this.setOrderedToSit(false);
-            }
-
-            if (entity != null && !(entity instanceof Player) && !(entity instanceof AbstractArrow)) {
-                p_30387_ = (p_30387_ + 1.0F) / 2.0F;
-            }
-
-            return super.hurt(p_30386_, p_30387_);
-        }
-    }
-
-    public void setTame(boolean p_30443_) {
-        super.setTame(p_30443_);
-        if (p_30443_) {
-            this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0D);
-            this.setHealth(20.0F);
-        } else {
-            this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(8.0D);
-        }
-
-        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0D);
-    }
-
+    // todo - move some of this logic to BaseDog
     public InteractionResult mobInteract(Player p_30412_, InteractionHand p_30413_) {
         ItemStack itemstack = p_30412_.getItemInHand(p_30413_);
         Item item = itemstack.getItem();
+
+
         if (this.level.isClientSide) {
+            if (getRetrieving()) {
+                Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal("Retriever is NOT retrieving"), false);
+            }
+            else {
+                Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal("Retriever is retrieving"), false);
+            }
+
             boolean flag = this.isOwnedBy(p_30412_) || this.isTame() || itemstack.is(Items.BONE) && !this.isTame();
             return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
-        } else {
+        }
+        else {
             if (this.isTame()) {
                 if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
                     this.heal((float)itemstack.getFoodProperties(this).getNutrition());
@@ -329,7 +241,6 @@ public class Retriever extends TamableAnimal {
 
                 return InteractionResult.SUCCESS;
             }
-
             return super.mobInteract(p_30412_, p_30413_);
         }
     }
@@ -338,44 +249,26 @@ public class Retriever extends TamableAnimal {
         return this.isTame() ? (-2.0F - (this.getMaxHealth() - this.getHealth()) * 0.02F) * (float)Math.PI : -0.2F;
     }
 
-    public boolean isFood(ItemStack p_30440_) {
-        Item item = p_30440_.getItem();
-        return item.isEdible() && p_30440_.getFoodProperties(this).isMeat();
-    }
-
     public int getMaxSpawnClusterSize() {
         return 8;
     }
 
-    public DyeColor getCollarColor() {
-        return DyeColor.byId(this.entityData.get(DATA_COLLAR_COLOR));
-    }
-
-    public void setCollarColor(DyeColor p_30398_) {
-        this.entityData.set(DATA_COLLAR_COLOR, p_30398_.getId());
-    }
-
-    public boolean canMate(Animal p_30392_) {
-        if (p_30392_ == this) {
+    public boolean canMate(Animal animal) {
+        if (animal == this) {
             return false;
         } else if (!this.isTame()) {
             return false;
-        } else if (!(p_30392_ instanceof Wolf)) {
+        } else if (!(animal instanceof Retriever retriever)) {
             return false;
         } else {
-            Wolf wolf = (Wolf)p_30392_;
-            if (!wolf.isTame()) {
+            if (!retriever.isTame()) {
                 return false;
-            } else if (wolf.isInSittingPose()) {
+            } else if (retriever.isInSittingPose()) {
                 return false;
             } else {
-                return this.isInLove() && wolf.isInLove();
+                return this.isInLove() && retriever.isInLove();
             }
         }
-    }
-
-    public Vec3 getLeashOffset() {
-        return new Vec3(0.0D, this.getEyeHeight(), (this.getBbWidth() * 0.4F));
     }
 
     // todo

@@ -2,8 +2,6 @@ package codyhuh.goodboy.common.entities.goals;
 
 import codyhuh.goodboy.common.entities.Retriever;
 import codyhuh.goodboy.registry.ModItems;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.pathfinder.Path;
@@ -32,7 +30,7 @@ public class TamedGoToToyGoal extends Goal {
             return false;
         }
 
-        items = mob.level.getEntitiesOfClass(ItemEntity.class, mob.getBoundingBox().inflate(24.0D), e -> {
+        items = mob.level.getEntitiesOfClass(ItemEntity.class, mob.getBoundingBox().inflate(48.0D), e -> {
             if (e.getOwner() != null) {
                 return !e.getOwner().equals(mob.getUUID()) && e.getItem().is(ModItems.DOG_TOY.get());
             }
@@ -59,7 +57,6 @@ public class TamedGoToToyGoal extends Goal {
         }
 
         item = items.get(0);
-
 
         path = mob.getNavigation().createPath(item, 0);
 
