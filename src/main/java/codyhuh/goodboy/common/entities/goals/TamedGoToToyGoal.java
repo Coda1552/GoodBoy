@@ -10,6 +10,7 @@ import net.minecraft.world.level.pathfinder.Path;
 
 import java.util.List;
 
+// todo - fix retrievers fetch wonky-ness
 public class TamedGoToToyGoal extends Goal {
     private final Retriever mob;
     private List<ItemEntity> items;

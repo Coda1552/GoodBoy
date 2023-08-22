@@ -81,14 +81,17 @@ public class RetrieverModel<T extends Retriever> extends AgeableListModel<T> {
 		if (entity.isInSittingPose()) {
 			this.tail.xRot = -0.5F;
 			this.tail.yRot = 0.0F;
+
 			this.rightBackLeg.xRot = -1.5708F;
 			this.leftBackLeg.xRot = -1.5708F;
 			this.rightFrontLeg.xRot = -1.5708F;
 			this.leftFrontLeg.xRot = -1.5708F;
+
 			this.rightBackLeg.yRot = 0.5708F;
 			this.leftBackLeg.yRot = -0.5708F;
 			this.rightFrontLeg.yRot = 0.15F;
 			this.leftFrontLeg.yRot = -0.15F;
+
 			this.body.y = 20.0F;
 			this.head.y = 16.0F;
 		}
