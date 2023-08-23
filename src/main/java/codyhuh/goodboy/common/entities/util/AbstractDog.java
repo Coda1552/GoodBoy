@@ -138,6 +138,10 @@ public abstract class AbstractDog extends TamableAnimal {
         }
     }
 
+    public float getTailAngle() {
+        return this.isTame() ? (-2.0F - (this.getMaxHealth() - this.getHealth()) * 0.02F) * (float)Math.PI : -0.2F;
+    }
+
     // todo - spawning
     public static boolean checkDogSpawnRules(EntityType<AbstractDog> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         return level.getBlockState(pos.below()).is(BlockTags.WOLVES_SPAWNABLE_ON) && isBrightEnoughToSpawn(level, pos);

@@ -16,9 +16,9 @@ import java.util.Map;
 
 public class RetrieverRenderer extends MobRenderer<Retriever, RetrieverModel<Retriever>> {
     public static final Map<Integer, ResourceLocation> TEXTURES = Util.make(Maps.newHashMap(), (hashMap) -> {
-        hashMap.put(0, new ResourceLocation(GoodBoy.MOD_ID, "textures/entity/retriever/retriever_golden.png"));
-        hashMap.put(1, new ResourceLocation(GoodBoy.MOD_ID, "textures/entity/retriever/retriever_black.png"));
-        hashMap.put(2, new ResourceLocation(GoodBoy.MOD_ID, "textures/entity/retriever/retriever_pale.png"));
+        hashMap.put(0, new ResourceLocation(GoodBoy.MOD_ID, "textures/entity/retriever/golden.png"));
+        hashMap.put(1, new ResourceLocation(GoodBoy.MOD_ID, "textures/entity/retriever/black.png"));
+        hashMap.put(2, new ResourceLocation(GoodBoy.MOD_ID, "textures/entity/retriever/pale.png"));
     });
 
     public RetrieverRenderer(EntityRendererProvider.Context context) {

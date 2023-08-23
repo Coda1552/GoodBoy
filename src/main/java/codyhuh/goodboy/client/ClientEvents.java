@@ -1,7 +1,9 @@
 package codyhuh.goodboy.client;
 
 import codyhuh.goodboy.GoodBoy;
+import codyhuh.goodboy.client.models.ChihuahuaModel;
 import codyhuh.goodboy.client.models.RetrieverModel;
+import codyhuh.goodboy.client.renders.ChihuahuaRenderer;
 import codyhuh.goodboy.client.renders.RetrieverRenderer;
 import codyhuh.goodboy.registry.ModEntities;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
@@ -15,11 +17,13 @@ public class ClientEvents {
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions e) {
         e.registerLayerDefinition(ModModelLayers.RETRIEVER, RetrieverModel::createBodyLayer);
+        e.registerLayerDefinition(ModModelLayers.CHIHUAHUA, ChihuahuaModel::createBodyLayer);
     }
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterRenderers e) {
         e.registerEntityRenderer(ModEntities.RETRIEVER.get(), RetrieverRenderer::new);
+        e.registerEntityRenderer(ModEntities.CHIHUAHUA.get(), ChihuahuaRenderer::new);
         e.registerEntityRenderer(ModEntities.DOG_TOY.get(), ThrownItemRenderer::new);
     }
 }
