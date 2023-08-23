@@ -71,6 +71,11 @@ public class Chihuahua extends AbstractDog {
         setVariant(tag.getInt("Variant"));
     }
 
+    @Override
+    public float getVoicePitch() {
+        return 2.0F;
+    }
+
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
