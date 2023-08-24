@@ -2,54 +2,44 @@ package codyhuh.goodboy.common.entities.goals;
 
 import codyhuh.goodboy.common.entities.Retriever;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.pathfinder.Path;
+
+import java.util.Objects;
 
 public class TamedRetrieveToyGoal extends Goal {
     private final Retriever mob;
-    private Path path;
 
     public TamedRetrieveToyGoal(Retriever mob) {
         this.mob = mob;
     }
 
     @Override
-    public boolean canContinueToUse() {
-        return path != null;
-    }
-
-    @Override
     public boolean canUse() {
-        return !mob.item.isEmpty() && mob.isTame() && mob.getOwner() != null;
+        LivingEntity owner = mob.getOwner();
+        return !mob.getItem().isEmpty() && mob.isTame() && owner != null && !mob.isOrderedToSit();
     }
 
     @Override
     public void tick() {
-        if (!mob.getRetrieving()) {
-            mob.setRetrieving(true);
-        }
+        LivingEntity owner = Objects.requireNonNull(mob.getOwner());
 
-        if (path != null) {
-            if (path.isDone()) {
-                mob.spawnAtLocation(mob.getItem());
-                mob.setItem(ItemStack.EMPTY);
-                mob.level.addParticle(ParticleTypes.HEART, mob.getX(), mob.getY() + 0.6D, mob.getZ(), 0.0D, 0.0D, 0.0D);
-                stop();
-            }
-            return;
-        }
+        mob.getNavigation().moveTo(owner, 1.35);
+        mob.getLookControl().setLookAt(owner);
 
-        if (mob.getOwner() != null && !mob.isOrderedToSit()) {
-            path = mob.getNavigation().createPath(mob.getOwner(), 0);
-            mob.getNavigation().moveTo(path, 1.35D);
+        if (mob.distanceToSqr(owner) <= 4) {
+            mob.spawnAtLocation(mob.getItem());
+            mob.setItem(ItemStack.EMPTY);
+            mob.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+            mob.level.addParticle(ParticleTypes.HEART, mob.getX(), mob.getY() + 0.6D, mob.getZ(), 0.0D, 0.0D, 0.0D);
+            stop();
         }
-
     }
 
     @Override
     public void stop() {
-        path = null;
         mob.setRetrieving(false);
     }
 }

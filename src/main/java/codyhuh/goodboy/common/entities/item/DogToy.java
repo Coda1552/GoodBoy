@@ -2,6 +2,7 @@ package codyhuh.goodboy.common.entities.item;
 
 import codyhuh.goodboy.registry.ModEntities;
 import codyhuh.goodboy.registry.ModItems;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -27,8 +28,12 @@ public class DogToy extends ThrowableItemProjectile {
 
         if (!this.level.isClientSide) {
             ItemEntity item = EntityType.ITEM.create(this.level);
+            Entity owner = getOwner();
             item.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
             item.setItem(new ItemStack(ModItems.DOG_TOY.get()));
+            if (owner != null) {
+                item.setThrower(owner.getUUID());
+            }
             this.level.addFreshEntity(item);
             this.level.broadcastEntityEvent(this, (byte)3);
             this.discard();
