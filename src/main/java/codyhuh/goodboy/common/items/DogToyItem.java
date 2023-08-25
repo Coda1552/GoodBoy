@@ -41,6 +41,7 @@ public class DogToyItem extends Item {
                 if (!level.isClientSide) {
                     DogToy toy = new DogToy(level, player);
 
+                    toy.setOwner(player);
                     toy.setItem(itemstack);
                     toy.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
 

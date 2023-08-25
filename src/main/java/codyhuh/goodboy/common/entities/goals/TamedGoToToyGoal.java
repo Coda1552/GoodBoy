@@ -2,17 +2,15 @@ package codyhuh.goodboy.common.entities.goals;
 
 import codyhuh.goodboy.common.entities.Retriever;
 import codyhuh.goodboy.registry.ModItems;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.level.pathfinder.Path;
 
 import java.util.List;
+import java.util.Objects;
 
-// todo - fix retrievers fetch wonky-ness
 public class TamedGoToToyGoal extends Goal {
     private final Retriever mob;
-    private List<ItemEntity> items;
-    private Path path;
     private ItemEntity item;
 
     public TamedGoToToyGoal(Retriever mob) {
@@ -21,25 +19,21 @@ public class TamedGoToToyGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return items != null && item != null && path != null;
+        return item != null && item.isAlive() && !mob.isOrderedToSit() && mob.distanceToSqr(item) > 1;
     }
 
     @Override
     public boolean canUse() {
-        if (!mob.item.isEmpty() || !mob.isTame() || mob.getOwner() == null) {
+        if (!mob.getItem().isEmpty() || !mob.isTame() || mob.getOwner() == null || mob.isOrderedToSit()) {
             return false;
         }
 
-        items = mob.level.getEntitiesOfClass(ItemEntity.class, mob.getBoundingBox().inflate(48.0D), e -> {
-            if (e.getOwner() != null) {
-                return !e.getOwner().equals(mob.getUUID()) && e.getItem().is(ModItems.DOG_TOY.get());
-            }
-            else {
-                return e.getItem().is(ModItems.DOG_TOY.get());
-            }
-        });
+        List<ItemEntity> items = mob.level.getEntitiesOfClass(ItemEntity.class, mob.getBoundingBox().inflate(48.0D), e ->
+                Objects.requireNonNull(mob.getOwnerUUID()).equals(e.getThrower()) && e.getItem().is(ModItems.DOG_TOY.get()));
 
-        return !items.isEmpty();
+        item = items.isEmpty() ? null : items.get(0);
+
+        return item != null && mob.distanceToSqr(item) > 16;
     }
 
     @Override
@@ -48,28 +42,17 @@ public class TamedGoToToyGoal extends Goal {
             mob.setRetrieving(true);
         }
 
-        if (path != null && item != null) {
-            if (path.isDone() && mob.equipItemIfPossible(item.getItem())) {
-                mob.setItem(item.getItem());
-                stop();
-            }
-            return;
-        }
+        mob.getNavigation().moveTo(item, 1.35D);
+        mob.getLookControl().setLookAt(item);
 
-        item = items.get(0);
-
-        path = mob.getNavigation().createPath(item, 0);
-
-        if (!mob.isOrderedToSit()) {
-            mob.getNavigation().moveTo(path, 1.35D);
+        if (mob.distanceToSqr(item) <= 4 && mob.equipItemIfPossible(item.getItem())) {
+            item.remove(Entity.RemovalReason.DISCARDED);
+            stop();
         }
     }
 
     @Override
     public void stop() {
         item = null;
-        items = null;
-        path = null;
-        mob.setRetrieving(false);
     }
 }

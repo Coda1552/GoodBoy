@@ -33,7 +33,7 @@ import java.util.UUID;
 public class Retriever extends AbstractDog {
     private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Retriever.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_RETRIEVING = SynchedEntityData.defineId(Retriever.class, EntityDataSerializers.BOOLEAN);
-    public ItemStack item = ItemStack.EMPTY;
+    private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(Retriever.class, EntityDataSerializers.ITEM_STACK);
 
     public Retriever(EntityType<? extends TamableAnimal> p_30369_, Level p_30370_) {
         super(p_30369_, p_30370_);
@@ -64,6 +64,7 @@ public class Retriever extends AbstractDog {
         super.defineSynchedData();
         this.entityData.define(DATA_VARIANT, 0);
         this.entityData.define(DATA_RETRIEVING, false);
+        this.entityData.define(DATA_ITEM, ItemStack.EMPTY);
     }
 
     public int getVariant() {
@@ -115,14 +116,14 @@ public class Retriever extends AbstractDog {
         super.addAdditionalSaveData(tag);
         tag.putInt("Variant", this.getVariant());
         tag.putBoolean("Retreiving", this.getRetrieving());
-        tag.put("item", item.save(new CompoundTag()));
+        tag.put("item", getItem().save(new CompoundTag()));
     }
 
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         setVariant(tag.getInt("Variant"));
         setRetrieving(tag.getBoolean("Retrieving"));
-        item = ItemStack.of(tag.getCompound("item"));
+        setItem(ItemStack.of(tag.getCompound("item")));
     }
 
     // todo ?
@@ -131,11 +132,20 @@ public class Retriever extends AbstractDog {
     }
 
     public ItemStack getItem() {
-        return item;
+        return entityData.get(DATA_ITEM);
     }
 
     public void setItem(final ItemStack item) {
-        this.item = item;
+        this.entityData.set(DATA_ITEM, item);
+    }
+
+    @Override
+    public void setItemSlot(EquipmentSlot p_21416_, ItemStack p_21417_) {
+        if (p_21416_ == EquipmentSlot.MAINHAND) {
+            setItem(p_21417_);
+            return;
+        }
+        super.setItemSlot(p_21416_, p_21417_);
     }
 
     @Override
@@ -148,7 +158,7 @@ public class Retriever extends AbstractDog {
 
     @Override
     public boolean canTakeItem(ItemStack pItemstack) {
-        return isTame() && pItemstack.is(ModItems.DOG_TOY.get()) && item.isEmpty();
+        return isTame() && pItemstack.is(ModItems.DOG_TOY.get()) && getItem().isEmpty();
     }
 
     @Override
@@ -159,7 +169,7 @@ public class Retriever extends AbstractDog {
     @Override
     public boolean equipItemIfPossible(ItemStack p_21541_) {
         if (this.canHoldItem(p_21541_)) {
-            item = p_21541_.copy();
+            setItem(p_21541_.copy());
             this.playEquipSound(p_21541_);
             return true;
         }
@@ -175,17 +185,9 @@ public class Retriever extends AbstractDog {
 
 
         if (this.level.isClientSide) {
-            if (getRetrieving()) {
-                Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal("Retriever is NOT retrieving"), false);
-            }
-            else {
-                Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal("Retriever is retrieving"), false);
-            }
-
             boolean flag = this.isOwnedBy(p_30412_) || this.isTame() || itemstack.is(Items.BONE) && !this.isTame();
             return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
-        }
-        else {
+        } else {
             if (this.isTame()) {
                 if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
                     this.heal((float)itemstack.getFoodProperties(this).getNutrition());
