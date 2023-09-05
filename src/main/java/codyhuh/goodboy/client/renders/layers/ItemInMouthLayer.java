@@ -31,13 +31,14 @@ public class ItemInMouthLayer<T extends Retriever, M extends EntityModel<T>> ext
             poseStack.pushPose();
 
             poseStack.translate(0.1F, 0.0F, -0.05F);
-            renderArmWithItem(p_117207_, stack, poseStack, p_117205_, p_117206_, p_117212_, p_117213_);
+            renderMouthWithItem(p_117207_, stack, poseStack, p_117205_, p_117206_, p_117212_, p_117213_);
 
             poseStack.popPose();
         }
     }
 
-    protected void renderArmWithItem(LivingEntity p_117185_, ItemStack p_117186_, PoseStack p_117189_, MultiBufferSource p_117190_, int p_117191_, float yaw, float pitch) {
+    // todo - fix item position/rotations
+    protected void renderMouthWithItem(LivingEntity p_117185_, ItemStack p_117186_, PoseStack p_117189_, MultiBufferSource p_117190_, int p_117191_, float yaw, float pitch) {
         if (!p_117186_.isEmpty()) {
             p_117189_.pushPose();
             p_117189_.translate(0, 0.7, -0.2);

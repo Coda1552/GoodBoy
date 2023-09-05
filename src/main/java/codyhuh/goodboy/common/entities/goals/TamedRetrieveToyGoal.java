@@ -2,6 +2,7 @@ package codyhuh.goodboy.common.entities.goals;
 
 import codyhuh.goodboy.common.entities.Retriever;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -33,7 +34,8 @@ public class TamedRetrieveToyGoal extends Goal {
             mob.spawnAtLocation(mob.getItem());
             mob.setItem(ItemStack.EMPTY);
             mob.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-            mob.level.addParticle(ParticleTypes.HEART, mob.getX(), mob.getY() + 0.6D, mob.getZ(), 0.0D, 0.0D, 0.0D);
+            ((ServerLevel) mob.level).sendParticles(ParticleTypes.HEART, mob.getX(), mob.getY() + 1.25D, mob.getZ(), 0, 0.0D, 0.0D, 0.0D, 0.0D);
+
             stop();
         }
     }

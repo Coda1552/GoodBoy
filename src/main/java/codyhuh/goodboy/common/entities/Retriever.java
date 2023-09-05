@@ -5,9 +5,7 @@ import codyhuh.goodboy.common.entities.goals.TamedRetrieveToyGoal;
 import codyhuh.goodboy.common.entities.util.AbstractDog;
 import codyhuh.goodboy.registry.ModEntities;
 import codyhuh.goodboy.registry.ModItems;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -126,7 +124,6 @@ public class Retriever extends AbstractDog {
         setItem(ItemStack.of(tag.getCompound("item")));
     }
 
-    // todo ?
     public int getMaxHeadXRot() {
         return this.isInSittingPose() ? 20 : super.getMaxHeadXRot();
     }
@@ -178,11 +175,10 @@ public class Retriever extends AbstractDog {
         }
     }
 
-    // todo - move some of this logic to BaseDog
+    // todo - move some of this logic to AbstractDog
     public InteractionResult mobInteract(Player p_30412_, InteractionHand p_30413_) {
         ItemStack itemstack = p_30412_.getItemInHand(p_30413_);
         Item item = itemstack.getItem();
-
 
         if (this.level.isClientSide) {
             boolean flag = this.isOwnedBy(p_30412_) || this.isTame() || itemstack.is(Items.BONE) && !this.isTame();
