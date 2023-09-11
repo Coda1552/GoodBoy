@@ -38,7 +38,6 @@ public class ItemInMouthLayer<T extends Retriever, M extends HierarchicalModel<T
         }
     }
 
-    // todo - fix item position/rotations
     protected void renderMouthWithItem(LivingEntity entity, ItemStack item, PoseStack stack, MultiBufferSource buffer, int p_117191_, float yaw, float pitch) {
         if (!item.isEmpty()) {
             stack.pushPose();

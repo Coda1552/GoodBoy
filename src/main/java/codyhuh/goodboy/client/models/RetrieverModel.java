@@ -7,8 +7,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
-// todo - sitting pose
-// todo - baby scale
+// todo - baby model
 public class RetrieverModel<T extends Retriever> extends HierarchicalModel<T> {
 	private final ModelPart root;
 	private final ModelPart head;

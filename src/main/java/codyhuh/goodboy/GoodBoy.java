@@ -5,7 +5,6 @@ import codyhuh.goodboy.common.entities.Retriever;
 import codyhuh.goodboy.common.entities.util.AbstractDog;
 import codyhuh.goodboy.registry.ModEntities;
 import codyhuh.goodboy.registry.ModItems;
-import codyhuh.goodboy.registry.ModStructureModifiers;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -39,7 +38,6 @@ public class GoodBoy {
 
         ModEntities.ENTITY_TYPES.register(bus);
         ModItems.ITEMS.register(bus);
-        ModStructureModifiers.STRUCTURE_MODIFIERS.register(bus);
 
         bus.addListener(this::registerAttributes);
         bus.addListener(this::registerSpawnPlacements);
@@ -55,6 +53,7 @@ public class GoodBoy {
         e.put(ModEntities.CHIHUAHUA.get(), Chihuahua.createChihuahuaAttributes().build());
     }
 
+    // todo - fix spawning
     private static void addBuildingToPool(Registry<StructureTemplatePool> templatePoolRegistry, Registry<StructureProcessorList> processorListRegistry, ResourceLocation poolRL, String nbtPieceRL, int weight) {
         Holder<StructureProcessorList> emptyProcessorList = processorListRegistry.getHolderOrThrow(EMPTY_PROCESSOR_LIST_KEY);
 
