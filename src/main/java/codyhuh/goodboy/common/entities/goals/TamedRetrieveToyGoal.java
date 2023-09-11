@@ -20,7 +20,7 @@ public class TamedRetrieveToyGoal extends Goal {
     @Override
     public boolean canUse() {
         LivingEntity owner = mob.getOwner();
-        return !mob.getItem().isEmpty() && mob.isTame() && owner != null && !mob.isOrderedToSit();
+        return !mob.getItem().isEmpty() && mob.isTame() && owner != null && !owner.isSpectator() && !mob.isOrderedToSit();
     }
 
     @Override

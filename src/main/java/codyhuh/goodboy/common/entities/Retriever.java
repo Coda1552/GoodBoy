@@ -125,7 +125,12 @@ public class Retriever extends AbstractDog {
     }
 
     public int getMaxHeadXRot() {
-        return this.isInSittingPose() ? 20 : super.getMaxHeadXRot();
+        return getItem() != null ? 0 : super.getMaxHeadXRot();
+    }
+
+    @Override
+    public int getMaxHeadYRot() {
+        return getItem() != null ? 0 : super.getMaxHeadXRot();
     }
 
     public ItemStack getItem() {

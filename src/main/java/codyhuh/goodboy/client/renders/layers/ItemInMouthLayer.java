@@ -3,7 +3,8 @@ package codyhuh.goodboy.client.renders.layers;
 import codyhuh.goodboy.common.entities.Retriever;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HierarchicalModel;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -16,7 +17,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ItemInMouthLayer<T extends Retriever, M extends EntityModel<T>> extends RenderLayer<T, M> {
+public class ItemInMouthLayer<T extends Retriever, M extends HierarchicalModel<T>> extends RenderLayer<T, M> {
     private final ItemInHandRenderer itemInHandRenderer;
 
     public ItemInMouthLayer(RenderLayerParent<T, M> p_234846_, ItemInHandRenderer p_234847_) {
@@ -38,16 +39,26 @@ public class ItemInMouthLayer<T extends Retriever, M extends EntityModel<T>> ext
     }
 
     // todo - fix item position/rotations
-    protected void renderMouthWithItem(LivingEntity p_117185_, ItemStack p_117186_, PoseStack p_117189_, MultiBufferSource p_117190_, int p_117191_, float yaw, float pitch) {
-        if (!p_117186_.isEmpty()) {
-            p_117189_.pushPose();
-            p_117189_.translate(0, 0.7, -0.2);
-            p_117189_.mulPose(Vector3f.XP.rotationDegrees(Mth.wrapDegrees(pitch - 90.0F)));
-            p_117189_.mulPose(Vector3f.ZP.rotationDegrees(45.0F));
-            p_117189_.mulPose(Vector3f.YP.rotationDegrees(Mth.wrapDegrees(yaw + 180.0F)));
-            p_117189_.translate(-0.2, 0.175, 0);
-            this.itemInHandRenderer.renderItem(p_117185_, p_117186_, ItemTransforms.TransformType.GROUND, false, p_117189_, p_117190_, p_117191_);
-            p_117189_.popPose();
+    protected void renderMouthWithItem(LivingEntity entity, ItemStack item, PoseStack stack, MultiBufferSource buffer, int p_117191_, float yaw, float pitch) {
+        if (!item.isEmpty()) {
+            stack.pushPose();
+
+            ModelPart modelpart = this.getParentModel().getAnyDescendantWithName("mouth").get();
+            ModelPart.Cube cube = modelpart.getRandomCube(entity.getRandom());
+
+            modelpart.translateAndRotate(stack);
+
+            float x = Mth.lerp(-3.5F, cube.minX, 1.0F) / 16.0F;
+            float y = Mth.lerp(11.0F, cube.minY, 1.0F) / 16.0F;
+            float z = Mth.lerp(-10.0F, cube.minZ, 1.0F) / 16.0F;
+
+            stack.translate(x, y, z);
+            stack.mulPose(Vector3f.YP.rotationDegrees(Mth.wrapDegrees(yaw)));
+            stack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
+            stack.mulPose(Vector3f.ZP.rotationDegrees(-45.0F));
+
+            this.itemInHandRenderer.renderItem(entity, item, ItemTransforms.TransformType.GROUND, false, stack, buffer, p_117191_);
+            stack.popPose();
         }
     }
 }

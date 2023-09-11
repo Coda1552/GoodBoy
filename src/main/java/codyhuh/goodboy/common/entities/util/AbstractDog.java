@@ -1,5 +1,6 @@
 package codyhuh.goodboy.common.entities.util;
 
+import codyhuh.goodboy.common.entities.Retriever;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -143,7 +144,7 @@ public abstract class AbstractDog extends TamableAnimal {
     }
 
     // todo - spawning
-    public static boolean checkDogSpawnRules(EntityType<AbstractDog> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+    public static boolean checkDogSpawnRules(EntityType<Retriever> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         return level.getBlockState(pos.below()).is(BlockTags.WOLVES_SPAWNABLE_ON) && isBrightEnoughToSpawn(level, pos);
     }
 }

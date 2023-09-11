@@ -1,8 +1,7 @@
 package codyhuh.goodboy.client.models;
 
 import codyhuh.goodboy.common.entities.Retriever;
-import com.google.common.collect.ImmutableList;
-import net.minecraft.client.model.AgeableListModel;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
@@ -10,7 +9,7 @@ import net.minecraft.util.Mth;
 
 // todo - sitting pose
 // todo - baby scale
-public class RetrieverModel<T extends Retriever> extends AgeableListModel<T> {
+public class RetrieverModel<T extends Retriever> extends HierarchicalModel<T> {
 	private final ModelPart root;
 	private final ModelPart head;
 	private final ModelPart body;
@@ -23,7 +22,7 @@ public class RetrieverModel<T extends Retriever> extends AgeableListModel<T> {
 	private final ModelPart rightEar;
 
 	public RetrieverModel(ModelPart base) {
-		super(true, 12.0F, 1.5F);
+		//super(true, 12.0F, 1.5F);
 		this.root = base.getChild("root");
 		this.head = root.getChild("head");
 		this.body = root.getChild("body");
@@ -44,7 +43,9 @@ public class RetrieverModel<T extends Retriever> extends AgeableListModel<T> {
 
 		PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(25, 0).addBox(-4.0F, -5.0F, -3.0F, 7.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.5F, -4.0F, -5.0F));
 
-		PartDefinition snout = head.addOrReplaceChild("snout", CubeListBuilder.create().texOffs(0, 0).addBox(-2.0F, -2.0F, -3.0F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 1.0F, -3.0F));
+		PartDefinition mouth = head.addOrReplaceChild("mouth", CubeListBuilder.create().texOffs(1, 1).addBox(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+
+		PartDefinition snout = head.addOrReplaceChild("snout", CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(-0.5F, 0.5F, -4.5F));
 
 		PartDefinition r_ear = head.addOrReplaceChild("r_ear", CubeListBuilder.create(), PartPose.offset(-4.0F, -5.0F, 0.0F));
 
@@ -52,7 +53,7 @@ public class RetrieverModel<T extends Retriever> extends AgeableListModel<T> {
 
 		PartDefinition l_ear = head.addOrReplaceChild("l_ear", CubeListBuilder.create(), PartPose.offset(3.0F, -5.0F, 0.0F));
 
-		PartDefinition cube_r2 = l_ear.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(0, 35).addBox(-0.1305F, -0.0086F, -2.0F, 1.0F, 5.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1745F));
+		PartDefinition cube_r2 = l_ear.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(30, 34).mirror().addBox(0.0F, 0.0F, -2.0F, 1.0F, 5.0F, 3.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1745F));
 
 		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, -5.0F, -6.0F, 6.0F, 8.0F, 13.0F, new CubeDeformation(0.0F))
 				.texOffs(0, 45).addBox(-3.0F, 3.0F, -6.0F, 6.0F, 2.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
@@ -76,6 +77,9 @@ public class RetrieverModel<T extends Retriever> extends AgeableListModel<T> {
 		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
 		this.head.xRot = headPitch * ((float)Math.PI / 180F);
 
+		this.body.y = 0.0F;
+		this.head.y = -4.0F;
+
 		if (entity.isInSittingPose()) {
 			this.tail.xRot = -0.5F;
 			this.tail.yRot = 0.0F;
@@ -90,8 +94,8 @@ public class RetrieverModel<T extends Retriever> extends AgeableListModel<T> {
 			this.rightFrontLeg.yRot = 0.15F;
 			this.leftFrontLeg.yRot = -0.15F;
 
-			this.body.y = 20.0F;
-			this.head.y = 16.0F;
+			this.body.y = 6.0F;
+			this.head.y = 2.0F;
 		}
 		else {
 			this.rightBackLeg.xRot = Mth.cos(limbSwing * 0.6F) * 1.4F * limbSwingAmount;
@@ -104,14 +108,12 @@ public class RetrieverModel<T extends Retriever> extends AgeableListModel<T> {
 			this.rightFrontLeg.yRot = 0.0F;
 			this.leftFrontLeg.yRot = 0.0F;
 
-			this.body.y = 14.0F;
-			this.head.y = 10.0F;
-
 			this.tail.xRot = ageInTicks;
 			this.tail.yRot = Mth.cos(limbSwing * 0.6F) * 0.5F * limbSwingAmount;
 		}
 	}
 
+/*
 	@Override
 	protected Iterable<ModelPart> headParts() {
 		return ImmutableList.of(head);
@@ -120,5 +122,11 @@ public class RetrieverModel<T extends Retriever> extends AgeableListModel<T> {
 	@Override
 	protected Iterable<ModelPart> bodyParts() {
 		return ImmutableList.of(body);
+	}
+*/
+
+	@Override
+	public ModelPart root() {
+		return root;
 	}
 }
