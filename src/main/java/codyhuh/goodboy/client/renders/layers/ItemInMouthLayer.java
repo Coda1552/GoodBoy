@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -38,7 +37,7 @@ public class ItemInMouthLayer<T extends Retriever, M extends HierarchicalModel<T
         }
     }
 
-    protected void renderMouthWithItem(LivingEntity entity, ItemStack item, PoseStack stack, MultiBufferSource buffer, int p_117191_, float yaw, float pitch) {
+    protected void renderMouthWithItem(T entity, ItemStack item, PoseStack stack, MultiBufferSource buffer, int p_117191_, float yaw, float pitch) {
         if (!item.isEmpty()) {
             stack.pushPose();
 
@@ -48,7 +47,7 @@ public class ItemInMouthLayer<T extends Retriever, M extends HierarchicalModel<T
             modelpart.translateAndRotate(stack);
 
             float x = Mth.lerp(-3.5F, cube.minX, 1.0F) / 16.0F;
-            float y = Mth.lerp(11.0F, cube.minY, 1.0F) / 16.0F;
+            float y = Mth.lerp(entity.isInSittingPose() ? 17.0F : 11.0F, cube.minY, 1.0F) / 16.0F;
             float z = Mth.lerp(-10.0F, cube.minZ, 1.0F) / 16.0F;
 
             stack.translate(x, y, z);
