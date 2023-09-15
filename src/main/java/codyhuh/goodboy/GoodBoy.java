@@ -75,15 +75,8 @@ public class GoodBoy {
         Registry<StructureTemplatePool> templatePoolRegistry = event.getServer().registryAccess().registry(Registry.TEMPLATE_POOL_REGISTRY).orElseThrow();
         Registry<StructureProcessorList> processorListRegistry = event.getServer().registryAccess().registry(Registry.PROCESSOR_LIST_REGISTRY).orElseThrow();
 
-        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/animals/cat_black"), "goodboy:village/retriever_golden", 100);
-        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/animals/cat_british"), "goodboy:village/retriever_golden", 100);
-        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/animals/cat_calico"), "goodboy:village/retriever_golden", 100);
-        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/animals/cat_jellie"), "goodboy:village/retriever_golden", 100);
-        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/animals/cat_persian"), "goodboy:village/retriever_pale", 100);
-        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/animals/cat_ragdoll"), "goodboy:village/retriever_pale", 100);
-        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/animals/cat_red"), "goodboy:village/retriever_pale", 100);
-        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/animals/cat_siamese"), "goodboy:village/retriever_black", 100);
-        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/animals/cat_tabby"), "goodboy:village/retriever_black", 100);
-        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/animals/cat_white"), "goodboy:village/retriever_black", 100);
+        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/cats"), "goodboy:village/retriever_golden", 5);
+        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/cats"), "goodboy:village/retriever_pale", 5);
+        addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/cats"), "goodboy:village/retriever_black", 5);
     }
 }
