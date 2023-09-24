@@ -12,12 +12,15 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
@@ -41,8 +44,20 @@ public class GoodBoy {
         ModItems.ITEMS.register(bus);
 
         bus.addListener(this::registerAttributes);
+        bus.addListener(this::populateTabs);
         bus.addListener(this::registerSpawnPlacements);
         forgeBus.addListener(this::addNewVillageBuilding);
+    }
+
+    private void populateTabs(BuildCreativeModeTabContentsEvent e) {
+        ResourceKey<CreativeModeTab> key = e.getTabKey();
+
+        if (key.equals(CreativeModeTabs.SPAWN_EGGS)) {
+            e.accept(ModItems.RETRIEVER_SPAWN_EGG.get());
+        }
+        if (key.equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) {
+            e.accept(ModItems.DOG_TOY.get());
+        }
     }
 
     private void registerSpawnPlacements(SpawnPlacementRegisterEvent e) {
