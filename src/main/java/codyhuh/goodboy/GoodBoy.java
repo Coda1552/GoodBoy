@@ -8,6 +8,7 @@ import codyhuh.goodboy.registry.ModItems;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.SpawnPlacements;
@@ -30,7 +31,7 @@ import java.util.List;
 @Mod(GoodBoy.MOD_ID)
 public class GoodBoy {
     public static final String MOD_ID = "goodboy";
-    private static final ResourceKey<StructureProcessorList> EMPTY_PROCESSOR_LIST_KEY = ResourceKey.create(Registry.PROCESSOR_LIST_REGISTRY, new ResourceLocation("minecraft", "empty"));
+    private static final ResourceKey<StructureProcessorList> EMPTY_PROCESSOR_LIST_KEY = ResourceKey.create(Registries.PROCESSOR_LIST, new ResourceLocation("minecraft", "empty"));
 
     public GoodBoy() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -71,8 +72,8 @@ public class GoodBoy {
     }
 
     public void addNewVillageBuilding(final ServerAboutToStartEvent event) {
-        Registry<StructureTemplatePool> templatePoolRegistry = event.getServer().registryAccess().registry(Registry.TEMPLATE_POOL_REGISTRY).orElseThrow();
-        Registry<StructureProcessorList> processorListRegistry = event.getServer().registryAccess().registry(Registry.PROCESSOR_LIST_REGISTRY).orElseThrow();
+        Registry<StructureTemplatePool> templatePoolRegistry = event.getServer().registryAccess().registry(Registries.TEMPLATE_POOL).orElseThrow();
+        Registry<StructureProcessorList> processorListRegistry = event.getServer().registryAccess().registry(Registries.PROCESSOR_LIST).orElseThrow();
 
         addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/cats"), "goodboy:village/retriever_golden", 5);
         addBuildingToPool(templatePoolRegistry, processorListRegistry, new ResourceLocation("minecraft:village/common/cats"), "goodboy:village/retriever_pale", 5);

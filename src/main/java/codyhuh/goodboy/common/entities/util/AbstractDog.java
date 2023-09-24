@@ -127,7 +127,7 @@ public abstract class AbstractDog extends TamableAnimal {
         }
         else {
             Entity entity = source.getEntity();
-            if (!this.level.isClientSide) {
+            if (!this.level().isClientSide) {
                 this.setOrderedToSit(false);
             }
 

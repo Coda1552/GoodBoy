@@ -169,14 +169,13 @@ public class Retriever extends AbstractDog {
     }
 
     @Override
-    public boolean equipItemIfPossible(ItemStack p_21541_) {
+    public ItemStack equipItemIfPossible(ItemStack p_21541_) {
         if (this.canHoldItem(p_21541_)) {
             setItem(p_21541_.copy());
-            this.playEquipSound(p_21541_);
-            return true;
+            return p_21541_;
         }
         else {
-            return false;
+            return ItemStack.EMPTY;
         }
     }
 
@@ -185,7 +184,7 @@ public class Retriever extends AbstractDog {
         ItemStack itemstack = p_30412_.getItemInHand(p_30413_);
         Item item = itemstack.getItem();
 
-        if (this.level.isClientSide) {
+        if (this.level().isClientSide) {
             boolean flag = this.isOwnedBy(p_30412_) || this.isTame() || itemstack.is(Items.BONE) && !this.isTame();
             return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
         } else {
@@ -232,9 +231,9 @@ public class Retriever extends AbstractDog {
                     this.navigation.stop();
                     this.setTarget(null);
                     this.setOrderedToSit(true);
-                    this.level.broadcastEntityEvent(this, (byte)7);
+                    this.level().broadcastEntityEvent(this, (byte)7);
                 } else {
-                    this.level.broadcastEntityEvent(this, (byte)6);
+                    this.level().broadcastEntityEvent(this, (byte)6);
                 }
 
                 return InteractionResult.SUCCESS;

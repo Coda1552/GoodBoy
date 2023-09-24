@@ -28,8 +28,9 @@ public class TamedGoToToyGoal extends Goal {
             return false;
         }
 
-        List<ItemEntity> items = mob.level.getEntitiesOfClass(ItemEntity.class, mob.getBoundingBox().inflate(48.0D), e ->
-                Objects.requireNonNull(mob.getOwnerUUID()).equals(e.getThrower()) && e.getItem().is(ModItems.DOG_TOY.get()));
+        List<ItemEntity> items = mob.level().getEntitiesOfClass(ItemEntity.class, mob.getBoundingBox().inflate(48.0D), e -> {
+            return e.getOwner() != null && Objects.requireNonNull(mob.getOwnerUUID()).equals(e.getOwner().getUUID()) && e.getItem().is(ModItems.DOG_TOY.get());
+        });
 
         item = items.isEmpty() ? null : items.get(0);
 
@@ -45,7 +46,7 @@ public class TamedGoToToyGoal extends Goal {
         mob.getNavigation().moveTo(item, 1.35D);
         mob.getLookControl().setLookAt(item);
 
-        if (mob.distanceToSqr(item) <= 4 && mob.equipItemIfPossible(item.getItem())) {
+        if (mob.distanceToSqr(item) <= 4 && mob.equipItemIfPossible(item.getItem()) == item.getItem()) {
             item.remove(Entity.RemovalReason.DISCARDED);
             stop();
         }

@@ -2,15 +2,15 @@ package codyhuh.goodboy.client.renders.layers;
 
 import codyhuh.goodboy.common.entities.Retriever;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -51,11 +51,11 @@ public class ItemInMouthLayer<T extends Retriever, M extends HierarchicalModel<T
             float z = Mth.lerp(-10.0F, cube.minZ, 1.0F) / 16.0F;
 
             stack.translate(x, y, z);
-            stack.mulPose(Vector3f.YP.rotationDegrees(Mth.wrapDegrees(yaw)));
-            stack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
-            stack.mulPose(Vector3f.ZP.rotationDegrees(-45.0F));
+            stack.mulPose(Axis.YP.rotationDegrees(Mth.wrapDegrees(yaw)));
+            stack.mulPose(Axis.XP.rotationDegrees(90.0F));
+            stack.mulPose(Axis.ZP.rotationDegrees(-45.0F));
 
-            this.itemInHandRenderer.renderItem(entity, item, ItemTransforms.TransformType.GROUND, false, stack, buffer, p_117191_);
+            this.itemInHandRenderer.renderItem(entity, item, ItemDisplayContext.GROUND, false, stack, buffer, p_117191_);
             stack.popPose();
         }
     }

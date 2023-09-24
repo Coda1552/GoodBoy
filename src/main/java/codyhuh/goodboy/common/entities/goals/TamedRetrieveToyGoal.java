@@ -34,7 +34,7 @@ public class TamedRetrieveToyGoal extends Goal {
             mob.spawnAtLocation(mob.getItem());
             mob.setItem(ItemStack.EMPTY);
             mob.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-            ((ServerLevel) mob.level).sendParticles(ParticleTypes.HEART, mob.getX(), mob.getY() + 1.25D, mob.getZ(), 0, 0.0D, 0.0D, 0.0D, 0.0D);
+            ((ServerLevel) mob.level()).sendParticles(ParticleTypes.HEART, mob.getX(), mob.getY() + 1.25D, mob.getZ(), 0, 0.0D, 0.0D, 0.0D, 0.0D);
 
             stop();
         }
