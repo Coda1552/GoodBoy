@@ -53,7 +53,6 @@ public class GoodBoy {
         e.put(ModEntities.CHIHUAHUA.get(), Chihuahua.createChihuahuaAttributes().build());
     }
 
-    // todo - fix spawning
     private static void addBuildingToPool(Registry<StructureTemplatePool> templatePoolRegistry, Registry<StructureProcessorList> processorListRegistry, ResourceLocation poolRL, String nbtPieceRL, int weight) {
         Holder<StructureProcessorList> emptyProcessorList = processorListRegistry.getHolderOrThrow(EMPTY_PROCESSOR_LIST_KEY);
 
