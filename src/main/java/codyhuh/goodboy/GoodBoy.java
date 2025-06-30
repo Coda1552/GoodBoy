@@ -64,7 +64,7 @@ public class GoodBoy {
 
     private void registerSpawnPlacements(SpawnPlacementRegisterEvent e) {
         e.register(ModEntities.RETRIEVER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Retriever::checkDogSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
-        e.register(ModEntities.CHIHUAHUA.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Chihuahua::checkDogSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        e.register(ModEntities.CHIHUAHUA.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Chihuahua::checkChihuahuaSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
     }
 
     private void registerAttributes(EntityAttributeCreationEvent e) {
