@@ -3,6 +3,7 @@ package codyhuh.goodboy.client.renders;
 import codyhuh.goodboy.GoodBoy;
 import codyhuh.goodboy.client.ModModelLayers;
 import codyhuh.goodboy.client.models.ChihuahuaModel;
+import codyhuh.goodboy.client.renders.layers.ChihuahuaEyesLayer;
 import codyhuh.goodboy.client.renders.layers.DogCollarLayer;
 import codyhuh.goodboy.common.entities.Chihuahua;
 import com.google.common.collect.Maps;
@@ -22,6 +23,7 @@ public class ChihuahuaRenderer extends MobRenderer<Chihuahua, ChihuahuaModel<Chi
     public ChihuahuaRenderer(EntityRendererProvider.Context context) {
         super(context, new ChihuahuaModel<>(context.bakeLayer(ModModelLayers.CHIHUAHUA)), 0.6F);
         addLayer(new DogCollarLayer<>(this, new ResourceLocation(GoodBoy.MOD_ID, "textures/entity/chihuahua/collar.png")));
+        addLayer(new ChihuahuaEyesLayer<>(this));
         shadowRadius = 0.25F;
     }
 

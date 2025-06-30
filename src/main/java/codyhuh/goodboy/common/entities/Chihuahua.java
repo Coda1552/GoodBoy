@@ -2,15 +2,25 @@ package codyhuh.goodboy.common.entities;
 
 import codyhuh.goodboy.common.entities.util.AbstractDog;
 import codyhuh.goodboy.registry.ModEntities;
+import codyhuh.goodboy.registry.ModSounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
@@ -20,12 +30,32 @@ import java.util.UUID;
 public class Chihuahua extends AbstractDog {
     private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Chihuahua.class, EntityDataSerializers.INT);
 
-    public Chihuahua(EntityType<? extends TamableAnimal> type, Level level) {
+    public Chihuahua(EntityType<? extends AbstractDog> type, Level level) {
         super(type, level);
     }
 
     public static AttributeSupplier.Builder createChihuahuaAttributes() {
         return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.315D).add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.ATTACK_DAMAGE, 0.5D);
+    }
+
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 1.0D, false));
+        this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Mob.class, false, e -> e.getBbHeight() > 1.5F && e.getBbWidth() > 1.5F));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
+    }
+
+    // todo - chnage to something more unique maybe?
+    @Override
+    public Item getTameItem() {
+        return Items.BONE;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (getTarget() != null) System.out.println(getTarget());
     }
 
     @Nullable
@@ -72,8 +102,18 @@ public class Chihuahua extends AbstractDog {
     }
 
     @Override
-    public float getVoicePitch() {
-        return 2.0F;
+    protected SoundEvent getAmbientSound() {
+        return ModSounds.CHIHUAHUA_GROWL.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource p_30424_) {
+        return ModSounds.CHIHUAHUA_BARK.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return ModSounds.CHIHUAHUA_BARK.get();
     }
 
     @Nullable
@@ -93,5 +133,23 @@ public class Chihuahua extends AbstractDog {
         }
 
         return spawnDataIn;
+    }
+
+    public boolean canMate(Animal animal) {
+        if (animal == this) {
+            return false;
+        } else if (!this.isTame()) {
+            return false;
+        } else if (!(animal instanceof Chihuahua chihuahua)) {
+            return false;
+        } else {
+            if (!chihuahua.isTame()) {
+                return false;
+            } else if (chihuahua.isInSittingPose()) {
+                return false;
+            } else {
+                return this.isInLove() && chihuahua.isInLove();
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 package codyhuh.goodboy.common.entities.util;
 
-import codyhuh.goodboy.common.entities.Retriever;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -10,18 +9,19 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractDog extends TamableAnimal {
@@ -42,6 +42,70 @@ public abstract class AbstractDog extends TamableAnimal {
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
     }
+
+    public InteractionResult mobInteract(Player p_30412_, InteractionHand p_30413_) {
+        ItemStack itemstack = p_30412_.getItemInHand(p_30413_);
+        Item item = itemstack.getItem();
+
+        if (this.level().isClientSide) {
+            boolean flag = this.isOwnedBy(p_30412_) || this.isTame() || itemstack.is(Items.BONE) && !this.isTame();
+            return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
+        } else {
+            if (this.isTame()) {
+                if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
+                    this.heal((float)itemstack.getFoodProperties(this).getNutrition());
+                    if (!p_30412_.getAbilities().instabuild) {
+                        itemstack.shrink(1);
+                    }
+
+                    this.gameEvent(GameEvent.EAT, this);
+                    return InteractionResult.SUCCESS;
+                }
+
+                if (!(item instanceof DyeItem)) {
+                    InteractionResult interactionresult = super.mobInteract(p_30412_, p_30413_);
+                    if ((!interactionresult.consumesAction() || this.isBaby()) && this.isOwnedBy(p_30412_)) {
+                        this.setOrderedToSit(!this.isOrderedToSit());
+                        this.jumping = false;
+                        this.navigation.stop();
+                        this.setTarget(null);
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    return interactionresult;
+                }
+
+                DyeColor dyecolor = ((DyeItem)item).getDyeColor();
+                if (dyecolor != this.getCollarColor()) {
+                    this.setCollarColor(dyecolor);
+                    if (!p_30412_.getAbilities().instabuild) {
+                        itemstack.shrink(1);
+                    }
+
+                    return InteractionResult.SUCCESS;
+                }
+            } else if (itemstack.is(getTameItem())) {
+                if (!p_30412_.getAbilities().instabuild) {
+                    itemstack.shrink(1);
+                }
+
+                if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
+                    this.tame(p_30412_);
+                    this.navigation.stop();
+                    this.setTarget(null);
+                    this.setOrderedToSit(true);
+                    this.level().broadcastEntityEvent(this, (byte)7);
+                } else {
+                    this.level().broadcastEntityEvent(this, (byte)6);
+                }
+
+                return InteractionResult.SUCCESS;
+            }
+            return super.mobInteract(p_30412_, p_30413_);
+        }
+    }
+
+    public abstract Item getTameItem();
 
     @Override
     protected void defineSynchedData() {
@@ -118,7 +182,7 @@ public abstract class AbstractDog extends TamableAnimal {
             this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(8.0D);
         }
 
-        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0D);
+        //this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0D);
     }
 
     public boolean hurt(DamageSource source, float amount) {
@@ -143,7 +207,7 @@ public abstract class AbstractDog extends TamableAnimal {
         return this.isTame() ? (-2.0F - (this.getMaxHealth() - this.getHealth()) * 0.02F) * (float)Math.PI : -0.2F;
     }
 
-    public static boolean checkDogSpawnRules(EntityType<Retriever> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+    public static boolean checkDogSpawnRules(EntityType<?> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         return level.getBlockState(pos.below()).is(BlockTags.WOLVES_SPAWNABLE_ON) && isBrightEnoughToSpawn(level, pos);
     }
 }

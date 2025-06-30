@@ -33,13 +33,18 @@ public class Retriever extends AbstractDog {
     private static final EntityDataAccessor<Boolean> DATA_RETRIEVING = SynchedEntityData.defineId(Retriever.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(Retriever.class, EntityDataSerializers.ITEM_STACK);
 
-    public Retriever(EntityType<? extends TamableAnimal> p_30369_, Level p_30370_) {
+    public Retriever(EntityType<? extends AbstractDog> p_30369_, Level p_30370_) {
         super(p_30369_, p_30370_);
         this.setTame(false);
         this.setPathfindingMalus(BlockPathTypes.POWDER_SNOW, -1.0F);
         this.setPathfindingMalus(BlockPathTypes.DANGER_POWDER_SNOW, -1.0F);
         this.setCanPickUpLoot(true);
         this.setDropChance(EquipmentSlot.MAINHAND, 1F);
+    }
+
+    @Override
+    public Item getTameItem() {
+        return Items.BONE;
     }
 
     protected void registerGoals() {
@@ -176,69 +181,6 @@ public class Retriever extends AbstractDog {
         }
         else {
             return ItemStack.EMPTY;
-        }
-    }
-
-    // todo - move some of this logic to AbstractDog
-    public InteractionResult mobInteract(Player p_30412_, InteractionHand p_30413_) {
-        ItemStack itemstack = p_30412_.getItemInHand(p_30413_);
-        Item item = itemstack.getItem();
-
-        if (this.level().isClientSide) {
-            boolean flag = this.isOwnedBy(p_30412_) || this.isTame() || itemstack.is(Items.BONE) && !this.isTame();
-            return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
-        } else {
-            if (this.isTame()) {
-                if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
-                    this.heal((float)itemstack.getFoodProperties(this).getNutrition());
-                    if (!p_30412_.getAbilities().instabuild) {
-                        itemstack.shrink(1);
-                    }
-
-                    this.gameEvent(GameEvent.EAT, this);
-                    return InteractionResult.SUCCESS;
-                }
-
-                if (!(item instanceof DyeItem)) {
-                    InteractionResult interactionresult = super.mobInteract(p_30412_, p_30413_);
-                    if ((!interactionresult.consumesAction() || this.isBaby()) && this.isOwnedBy(p_30412_)) {
-                        this.setOrderedToSit(!this.isOrderedToSit());
-                        this.jumping = false;
-                        this.navigation.stop();
-                        this.setTarget(null);
-                        return InteractionResult.SUCCESS;
-                    }
-
-                    return interactionresult;
-                }
-
-                DyeColor dyecolor = ((DyeItem)item).getDyeColor();
-                if (dyecolor != this.getCollarColor()) {
-                    this.setCollarColor(dyecolor);
-                    if (!p_30412_.getAbilities().instabuild) {
-                        itemstack.shrink(1);
-                    }
-
-                    return InteractionResult.SUCCESS;
-                }
-            } else if (itemstack.is(Items.BONE)) {
-                if (!p_30412_.getAbilities().instabuild) {
-                    itemstack.shrink(1);
-                }
-
-                if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
-                    this.tame(p_30412_);
-                    this.navigation.stop();
-                    this.setTarget(null);
-                    this.setOrderedToSit(true);
-                    this.level().broadcastEntityEvent(this, (byte)7);
-                } else {
-                    this.level().broadcastEntityEvent(this, (byte)6);
-                }
-
-                return InteractionResult.SUCCESS;
-            }
-            return super.mobInteract(p_30412_, p_30413_);
         }
     }
 

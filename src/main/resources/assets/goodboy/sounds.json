@@ -1,0 +1,15 @@
+{
+  "entity.chihuahua.bark": {
+    "subtitle": "subtitle.goodboy.chihuahua.bark",
+    "sounds": [
+      "goodboy:entity/chihuahua/bark"
+    ]
+  },
+  "entity.chihuahua.growl": {
+    "subtitle": "subtitle.goodboy.chihuahua.growl",
+    "sounds": [
+      "goodboy:entity/chihuahua/growl0",
+      "goodboy:entity/chihuahua/growl1"
+    ]
+  }
+}

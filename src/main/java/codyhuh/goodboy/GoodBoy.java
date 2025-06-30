@@ -2,9 +2,9 @@ package codyhuh.goodboy;
 
 import codyhuh.goodboy.common.entities.Chihuahua;
 import codyhuh.goodboy.common.entities.Retriever;
-import codyhuh.goodboy.common.entities.util.AbstractDog;
 import codyhuh.goodboy.registry.ModEntities;
 import codyhuh.goodboy.registry.ModItems;
+import codyhuh.goodboy.registry.ModSounds;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -42,6 +42,7 @@ public class GoodBoy {
 
         ModEntities.ENTITY_TYPES.register(bus);
         ModItems.ITEMS.register(bus);
+        ModSounds.SOUNDS.register(bus);
 
         bus.addListener(this::registerAttributes);
         bus.addListener(this::populateTabs);
@@ -54,6 +55,7 @@ public class GoodBoy {
 
         if (key.equals(CreativeModeTabs.SPAWN_EGGS)) {
             e.accept(ModItems.RETRIEVER_SPAWN_EGG.get());
+            e.accept(ModItems.CHIHUAHUA_SPAWN_EGG.get());
         }
         if (key.equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) {
             e.accept(ModItems.DOG_TOY.get());
@@ -61,7 +63,8 @@ public class GoodBoy {
     }
 
     private void registerSpawnPlacements(SpawnPlacementRegisterEvent e) {
-        e.register(ModEntities.RETRIEVER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractDog::checkDogSpawnRules, SpawnPlacementRegisterEvent.Operation.AND);
+        e.register(ModEntities.RETRIEVER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Retriever::checkDogSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        e.register(ModEntities.CHIHUAHUA.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Chihuahua::checkDogSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
     }
 
     private void registerAttributes(EntityAttributeCreationEvent e) {

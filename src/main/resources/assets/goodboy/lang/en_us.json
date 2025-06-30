@@ -5,5 +5,8 @@
 
   "entity.goodboy.retriever": "Retriever",
   "entity.goodboy.chihuahua": "Chihuahua",
-  "entity.goodboy.dog_toy": "Dog Toy"
+  "entity.goodboy.dog_toy": "Dog Toy",
+
+  "subtitle.goodboy.chihuahua.growl": "Chihuahua growls",
+  "subtitle.goodboy.chihuahua.bark": "Chihuahua barks"
 }
