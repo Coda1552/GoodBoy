@@ -54,6 +54,11 @@ public class Chihuahua extends AbstractDog {
     }
 
     @Override
+    public int getAmbientSoundInterval() {
+        return 360;
+    }
+
+    @Override
     public Item getTameItem() {
         return Items.BONE;
     }
