@@ -71,7 +71,7 @@ public class GoodBoy {
         list.removeIf(chi -> chi.getOwner() == null || !chi.getOwner().is(player));
 
         if (!list.isEmpty()) {
-            player.addEffect(new MobEffectInstance(ModMobEffects.CHIHUAHUAS_MIGHT.get(), 100, Math.min(list.size() - 1, 2)));
+            player.addEffect(new MobEffectInstance(ModMobEffects.CHIHUAHUAS_MIGHT.get(), 100, Math.min((list.size() / 3) - 1, 2)));
         }
     }
 
