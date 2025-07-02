@@ -4,6 +4,7 @@ import codyhuh.goodboy.common.entities.Chihuahua;
 import codyhuh.goodboy.common.entities.Retriever;
 import codyhuh.goodboy.registry.ModEntities;
 import codyhuh.goodboy.registry.ModItems;
+import codyhuh.goodboy.registry.ModMobEffects;
 import codyhuh.goodboy.registry.ModSounds;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
@@ -11,9 +12,15 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffectUtil;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
@@ -21,8 +28,11 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -42,12 +52,27 @@ public class GoodBoy {
 
         ModEntities.ENTITY_TYPES.register(bus);
         ModItems.ITEMS.register(bus);
+        ModMobEffects.MOB_EFFECTS.register(bus);
         ModSounds.SOUNDS.register(bus);
 
         bus.addListener(this::registerAttributes);
         bus.addListener(this::populateTabs);
         bus.addListener(this::registerSpawnPlacements);
+        forgeBus.addListener(this::addPlayerEffects);
         forgeBus.addListener(this::addNewVillageBuilding);
+    }
+
+    private void addPlayerEffects(TickEvent.PlayerTickEvent e) {
+        Player player = e.player;
+        Level level = player.level();
+
+        List<Chihuahua> list = level.getNearbyEntities(Chihuahua.class, TargetingConditions.forNonCombat(), player, player.getBoundingBox().inflate(8.0D));
+
+        list.removeIf(chi -> chi.getOwner() == null || !chi.getOwner().is(player));
+
+        if (!list.isEmpty()) {
+            player.addEffect(new MobEffectInstance(ModMobEffects.CHIHUAHUAS_MIGHT.get(), 100, Math.min(list.size() - 1, 2)));
+        }
     }
 
     private void populateTabs(BuildCreativeModeTabContentsEvent e) {

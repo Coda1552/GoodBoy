@@ -1,5 +1,6 @@
 package codyhuh.goodboy.common.entities;
 
+import codyhuh.goodboy.common.entities.goals.SeekComfortGoal;
 import codyhuh.goodboy.common.entities.util.AbstractDog;
 import codyhuh.goodboy.registry.ModEntities;
 import codyhuh.goodboy.registry.ModSounds;
@@ -17,6 +18,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
@@ -45,20 +47,15 @@ public class Chihuahua extends AbstractDog {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 1.0D, false));
-        this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Mob.class, false, e -> e.getBbHeight() > 1.5F && e.getBbWidth() > 1.5F));
+        this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
+        this.goalSelector.addGoal(1, new SeekComfortGoal(this, 1.2D, 6));
+        this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Mob.class, false, e -> e.getBbHeight() >= 1.5F && e.getBbWidth() >= 1.5F));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
     }
 
-    // todo - chnage to something more unique maybe?
     @Override
     public Item getTameItem() {
         return Items.BONE;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        if (getTarget() != null) System.out.println(getTarget());
     }
 
     @Nullable
