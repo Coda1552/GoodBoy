@@ -10,5 +10,8 @@
   "effect.goodboy.chihuahuas_might": "Mini Might",
 
   "subtitle.goodboy.chihuahua.growl": "Chihuahua growls",
-  "subtitle.goodboy.chihuahua.bark": "Chihuahua barks"
+  "subtitle.goodboy.chihuahua.bark": "Chihuahua barks",
+
+  "advancements.husbandry.small_but_mighty.title": "Small But Mighty",
+  "advancements.husbandry.small_but_mighty.description": "Obtain the Mini Might effect from tamed Chihuahuas"
 }

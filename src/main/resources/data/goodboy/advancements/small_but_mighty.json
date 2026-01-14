@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:husbandry/root",
+  "criteria": {
+    "mini_might": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "goodboy:chihuahuas_might": {}
+        }
+      }
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.husbandry.small_but_mighty.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:bone_meal"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.husbandry.small_but_mighty.title"
+    }
+  },
+  "requirements": [
+    [
+      "mini_might"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
